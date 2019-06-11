@@ -1,12 +1,13 @@
 const path = require('path');
-// const HtmlWebpackPlugin = require('html-webpack-plugin');
-// const {CleanWebpackPlugin} = require('clean-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const {CleanWebpackPlugin} = require('clean-webpack-plugin');
+const HtmlWebpackInjector = require('html-webpack-injector');
 
 module.exports = {
     mode: "development",
     entry: {
         app: "./src/app.js",
-        styles: "./src/main.scss"
+        styles_head: "./src/main.scss"
     },
     devtool: 'inline-source-map',
     output: {
@@ -14,8 +15,11 @@ module.exports = {
         path: path.resolve(__dirname, 'dist')
     },
     plugins: [
-        // new CleanWebpackPlugin(),
-        // new HtmlWebpackPlugin({title: 'test'})
+        new HtmlWebpackPlugin({
+            template: './src/index.twig',
+        }),
+        new HtmlWebpackInjector(),
+        new CleanWebpackPlugin()
     ],
     devServer: {
         contentBase: './dist'
@@ -48,6 +52,13 @@ module.exports = {
                 test: /\.(png|svg|jpg|gif)$/,
                 use: [
                     'file-loader'
+                ]
+            },
+            {
+                test: /\.twig$/,
+                use: [
+                    'raw-loader',
+                    'twig-html-loader'
                 ]
             }
         ]
