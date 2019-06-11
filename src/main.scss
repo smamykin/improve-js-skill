@@ -1,6 +1,10 @@
+@import url('https://fonts.googleapis.com/css?family=PT+Serif&display=swap');
+
 $primary : #0F69AF;
 $primaryOpposite : #fff;
 $textPrimary: #000;
 body {
   color: $textPrimary;
+  font-family: 'PT Serif', serif;
+  font-size: 18px;
 }
