@@ -7,7 +7,7 @@ module.exports = {
     mode: "development",
     entry: {
         app: "./src/app.js",
-        styles_head: "./src/main.scss"
+        styles_head: "./src/style.js"
     },
     devtool: 'inline-source-map',
     output: {
@@ -49,7 +49,7 @@ module.exports = {
                 ]
             },
             {
-                test: /\.(png|svg|jpg|gif)$/,
+                test: /\.(jpeg|png|svg|jpg|gif)$/,
                 use: [
                     'file-loader'
                 ]
@@ -59,6 +59,12 @@ module.exports = {
                 use: [
                     'raw-loader',
                     'twig-html-loader'
+                ]
+            },
+            {
+                test: /\.(woff|woff2|eot|ttf|otf)$/,
+                use: [
+                    'file-loader'
                 ]
             }
         ]
