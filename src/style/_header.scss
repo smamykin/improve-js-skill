@@ -1,0 +1,20 @@
+@import './_variables.scss';
+
+.header {
+  background-color: $primaryOpposite;
+  height: 70px;
+  color: $textOpposite;
+  position: fixed;
+  width: 100%;
+  z-index: 1000;
+  transition: top 350ms;
+
+  .logo {
+    font-size: 35px;
+    color: $textOpposite;
+    height: 100%;
+    width: 100px;
+    text-align: center;
+    padding-top: 10px;
+  }
+}
