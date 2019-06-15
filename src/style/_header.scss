@@ -1,6 +1,6 @@
 @import './_variables.scss';
 
-.header {
+body > .header {
   background-color: $primaryOpposite;
   height: 70px;
   color: $textOpposite;
