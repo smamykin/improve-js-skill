@@ -4,9 +4,10 @@ body > .header {
   background-color: $primaryOpposite;
   height: 70px;
   color: $textOpposite;
-  position: fixed;
+  position: static;
   width: 100%;
   z-index: 1000;
+  top: 0;
   transition: top 350ms;
 
   .logo {
@@ -16,5 +17,11 @@ body > .header {
     width: 100px;
     text-align: center;
     padding-top: 10px;
+  }
+  &.hidden {
+    top:-100px;
+  }
+  &[data-is_hide] {
+    position:fixed;
   }
 }

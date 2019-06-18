@@ -18,6 +18,10 @@ module.exports = {
         new HtmlWebpackPlugin({
             template: './src/index.twig',
         }),
+        new HtmlWebpackPlugin({
+            template: './src/people_list.twig',
+            filename: 'people_list.html'
+        }),
         new HtmlWebpackInjector(),
         new CleanWebpackPlugin()
     ],
