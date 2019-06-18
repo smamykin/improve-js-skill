@@ -9,57 +9,57 @@ new Swiper('.swiper-container', {
         nextEl: '.swiper-button-next',
         prevEl: '.swiper-button-prev',
     },
-    autoplay:{
+    autoplay: {
         delay: 10000,
         disableOnInteraction: false,
     }
 });
 
+(function () {
+    const header = document.querySelector('body > .header'),
+        body = document.querySelector('body');
+
+    if (! header.hasAttribute('data-is_hide')) {
+        return;
+    }
+
 //hide header for cover picture
-const showHideBoundary = 100;
-const header = document.querySelector('.header');
-const hideHeader = (header, scrolledContainer) => {
-    if (showHideBoundary > scrolledContainer.scrollTop) {
-        header.style.top = '-100px';
-    }
-};
-const showHeader = (header, scrolledContainer) => {
-    if (showHideBoundary < scrolledContainer.scrollTop) {
-        header.style.top = '0px';
-    }
-};
-const hideShowHeader = (header, scrolledContainer) => {
-    hideHeader(header, scrolledContainer);
-    showHeader(header, scrolledContainer);
-};
+    (function (body, header, showHideBoundary, hiddenClass) {
+        const hideShowHeader = () => {
+            const hasClass = 0 < header.className.indexOf(hiddenClass);
+            let scrollTop = body.scrollTop;
 
-const body = document.querySelector('body');
+            if (!hasClass && showHideBoundary > scrollTop) {
+                header.className += ` ${hiddenClass}`
+            } else if (hasClass && showHideBoundary <= scrollTop) {
+                header.className = header.className.replace(new RegExp(hiddenClass, 'g'), '');
+            }
+        };
 
-hideShowHeader(header, body);
+        hideShowHeader();
 
-const onScroll = (event) => {
-    let header = document.querySelector('.header');
-    hideShowHeader(header, event.target);
-};
+        body.addEventListener('scroll', hideShowHeader);
+    })(body, header, 100, 'hidden');
 
-body.addEventListener('scroll', onScroll);
+    (function (body, header, scrollLink) {
+        //scroll further from a cover picture
+        const onClickOnScrollLink = () => {
 
+            let id = setInterval(function () {
+                const end = scrollLink.offsetTop - header.offsetHeight;
+                const start = body.scrollTop;
+                const pieceMax = 7;
 
-//scroll further from a cover picture
-const scrollLink = document.querySelector('.js-scroll-swiper-link');
-const onClickOnScrollLink = () => {
-    let id = setInterval(function(){
-        const end  = scrollLink.offsetTop - header.offsetHeight;
-        const start = body.scrollTop;
-        const pieceMax = 7;
-        let dist = end - start;
-        if (dist <= 0) {
-            clearInterval(id);
-            return;
-        }
-        let piece = (dist < pieceMax) ? dist : pieceMax;
-        body.scrollTop = start + piece;
-    },0.01);
+                let dist = end - start;
+                if (dist <= 0) {
+                    clearInterval(id);
+                    return;
+                }
+                let piece = (dist < pieceMax) ? dist : pieceMax;
+                body.scrollTop = start + piece;
+            }, 0.01);
 
-};
-scrollLink.addEventListener('click', onClickOnScrollLink,false);
+        };
+        scrollLink.addEventListener('click', onClickOnScrollLink, false);
+    })(body, header, document.querySelector('.js-scroll-swiper-link'));
+})();
