@@ -2,7 +2,10 @@
 
 {% block content %}
     <div class="container">
-        <h1>People List</h1>
+        <div>
+            <div class="js-add_person person_list_btn">Add</div>
+            <h1>People List</h1>
+        </div>
         <div class="people_list_container">
             {% for i in 0..10 %}
                 <div class="people_card">
@@ -17,7 +20,7 @@
                         </div>
                     </div>
                     <i class="click-me far fa-hand-pointer"></i>
-{#                    <i class="click-me fas fa-mouse-pointer"></i>#}
+                    {#                    <i class="click-me fas fa-mouse-pointer"></i>#}
                 </div>
             {% endfor %}
         </div>

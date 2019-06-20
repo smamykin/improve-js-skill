@@ -1,3 +1,4 @@
+@import "variables";
 .people_list_container {
   display: flex;
   justify-content: space-around;
@@ -69,5 +70,19 @@
         object-fit: cover;
       }
     }
+  }
+
+}
+
+.person_list_btn {
+  float:right;
+  padding: 5px 10px;
+  border: 1px solid $textPrimary;
+  border-radius:2px;
+  margin-top:6px;
+  &:hover, &:active {
+    color:$textOpposite;
+    background-color: $primaryOpposite;
+    border:$primaryOpposite
   }
 }
