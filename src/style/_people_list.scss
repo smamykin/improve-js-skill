@@ -12,8 +12,10 @@
     margin: 20px 0;
 
     .people_info {
-      opacity:0;
-      transition:opacity 0.25s;
+      .hidden_block{
+        opacity:0;
+        transition:opacity 0.25s;
+      }
       position: absolute;
       top:0;
       left:0;
@@ -41,7 +43,7 @@
 
         filter:grayscale(100%);
       }
-      .people_info {
+      .people_info .hidden_block{
         opacity: 1;
       }
     }
