@@ -4,7 +4,8 @@
   "description": "This is a homework that I make up for myself.",
   "main": "index.js",
   "dependencies": {
-    "swiper": "^4.5.0"
+    "swiper": "^4.5.0",
+    "tingle.js": "^0.15.1"
   },
   "devDependencies": {
     "@babel/core": "^7.4.5",

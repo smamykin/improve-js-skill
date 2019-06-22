@@ -1,4 +1,5 @@
 import Swiper from 'swiper';
+import tingle from 'tingle.js';
 
 //swiper
 new Swiper('.swiper-container', {
@@ -23,7 +24,7 @@ new Swiper('.swiper-container', {
         return;
     }
 
-//hide header for cover picture
+    //hide header for cover picture
     (function (body, header, showHideBoundary, hiddenClass) {
         const hideShowHeader = () => {
             const hasClass = 0 < header.className.indexOf(hiddenClass);
@@ -63,3 +64,58 @@ new Swiper('.swiper-container', {
         scrollLink.addEventListener('click', onClickOnScrollLink, false);
     })(body, header, document.querySelector('.js-scroll-swiper-link'));
 })();
+
+(function(){
+
+    const addBtn = document.querySelector('.js-add_person');
+    if (!addBtn){
+        return;
+    }
+    let addModal;
+    const onAddPerson = function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+
+        let form = e.target;
+        console.log([form.person_name, form.person_title, form.person_quote]);
+    };
+
+    const showAddPersonModal = function() {
+
+        function getModal() {
+            let modal = new tingle.modal({
+                footer: true,
+                stickyFooter: false,
+                closeMethods: ['overlay', 'button', 'escape'],
+                closeLabel: "Close",
+                // cssClass: ['custom-class-1', 'custom-class-2'],
+                onOpen: function () {
+                    console.log('modal open');
+                },
+                onClose: function () {
+                    console.log('modal closed');
+                },
+                beforeClose: function () {
+                    // here's goes some logic
+                    // e.g. save content before closing the modal
+                    return true; // close the modal
+                    // return false; // nothing happens
+                }
+            });
+            let div = document.createElement('div');
+            div.innerHTML = require('./templates/addPersonForm.twig').default;
+            let form = div.querySelector('form');
+            form.addEventListener('submit', onAddPerson);
+            modal.setContent(div);
+            return modal;
+        }
+
+        addModal = addModal || getModal();
+        addModal.open();
+    };
+
+    addBtn.addEventListener('click',showAddPersonModal)
+})();
+
+
