@@ -1,5 +1,7 @@
 import Swiper from 'swiper';
 import tingle from 'tingle.js';
+import {openDB} from 'idb';
+
 
 //swiper
 new Swiper('.swiper-container', {
@@ -66,52 +68,94 @@ new Swiper('.swiper-container', {
 })();
 
 (function(){
-
     const addBtn = document.querySelector('.js-add_person');
     if (!addBtn){
         return;
     }
-    let addModal;
+
+    async function getIDBPersonList(){
+        const dbName = 'app';
+        const personListStoreName = 'person_list';
+        const version = 1;
+        const dbPromise = openDB(dbName, version, {
+            upgrade(db, oldVersion, newVersion, transaction) {
+                debugger;
+                for (let i = oldVersion; i < newVersion; ++i){
+                    switch (oldVersion){
+                        case 0:
+                            db.createObjectStore(personListStoreName,{autoIncrement:true});
+                        break;
+                    }
+                }
+            },
+            blocked() {},
+            blocking() {}
+        });
+
+        return {
+            async get(key) {
+                return (await dbPromise).get(personListStoreName, key);
+            },
+            async add(val) {
+                return (await dbPromise).add(personListStoreName, val);
+            },
+            async put(key, val) {
+                return (await dbPromise).put(personListStoreName, val, key);
+            },
+            async delete(key) {
+                return (await dbPromise).delete(personListStoreName, key);
+            },
+            async clear() {
+                return (await dbPromise).clear(personListStoreName);
+            }
+        };
+    }
+
     const onAddPerson = function(e){
         e.preventDefault();
         e.stopPropagation();
-        e.stopImmediatePropagation();
 
-        let form = e.target;
-        console.log([form.person_name, form.person_title, form.person_quote]);
+        let form = e.target,
+            name = form['person_name'].value,
+            title= form['person_title'].value,
+            quote= form['person_quote'].value;
+
+        if (!name){
+            return;
+        }
+
+        const dbPersonList = getIDBPersonList();
+
+        dbPersonList.then(function(store){
+            store.add({ name, title, quote });
+        }).catch(function(reason){
+            console.error(reason);
+        });
     };
 
+    let addModal;
     const showAddPersonModal = function() {
 
-        function getModal() {
+        function initAddFormModal() {
             let modal = new tingle.modal({
                 footer: true,
                 stickyFooter: false,
                 closeMethods: ['overlay', 'button', 'escape'],
                 closeLabel: "Close",
-                // cssClass: ['custom-class-1', 'custom-class-2'],
-                onOpen: function () {
-                    console.log('modal open');
-                },
-                onClose: function () {
-                    console.log('modal closed');
-                },
-                beforeClose: function () {
-                    // here's goes some logic
-                    // e.g. save content before closing the modal
-                    return true; // close the modal
-                    // return false; // nothing happens
-                }
             });
+
             let div = document.createElement('div');
             div.innerHTML = require('./templates/addPersonForm.twig').default;
             let form = div.querySelector('form');
             form.addEventListener('submit', onAddPerson);
+            form.addEventListener('submit', function(){
+                modal.close()
+            });
             modal.setContent(div);
             return modal;
         }
 
-        addModal = addModal || getModal();
+        addModal = addModal || initAddFormModal();
         addModal.open();
     };
 
