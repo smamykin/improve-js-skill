@@ -4,11 +4,13 @@
   "description": "This is a homework that I make up for myself.",
   "main": "index.js",
   "dependencies": {
+    "idb": "^4.0.3",
     "swiper": "^4.5.0",
     "tingle.js": "^0.15.1"
   },
   "devDependencies": {
     "@babel/core": "^7.4.5",
+    "@babel/polyfill": "^7.4.4",
     "@babel/preset-env": "^7.4.5",
     "@fortawesome/fontawesome-free": "^5.9.0",
     "babel-loader": "^8.0.6",

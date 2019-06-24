@@ -3,10 +3,14 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const HtmlWebpackInjector = require('html-webpack-injector');
 
+
 module.exports = {
     mode: "development",
     entry: {
-        app: "./src/app.js",
+        app:[
+            '@babel/polyfill',
+            "./src/app.js",
+        ],
         styles_head: "./src/style.js"
     },
     devtool: 'inline-source-map',
