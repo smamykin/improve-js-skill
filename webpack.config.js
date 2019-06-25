@@ -11,6 +11,14 @@ module.exports = {
             '@babel/polyfill',
             "./src/app.js",
         ],
+        main_page: [
+            '@babel/polyfill',
+            "./src/js/main_page.js",
+        ],
+        people_list: [
+            '@babel/polyfill',
+            "./src/js/people_list",
+        ],
         styles_head: "./src/style.js"
     },
     devtool: 'inline-source-map',
@@ -21,10 +29,12 @@ module.exports = {
     plugins: [
         new HtmlWebpackPlugin({
             template: './src/index.twig',
+            chunks:['app','styles_head', 'main_page']
         }),
         new HtmlWebpackPlugin({
             template: './src/people_list.twig',
-            filename: 'people_list.html'
+            filename: 'people_list.html',
+            chunks:['app', 'styles_head', 'people_list']
         }),
         new HtmlWebpackInjector(),
         new CleanWebpackPlugin()
