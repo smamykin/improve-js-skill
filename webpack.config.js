@@ -65,8 +65,7 @@ module.exports = {
             {
                 test: /\.twig$/,
                 use: [
-                    'raw-loader',
-                    'twig-html-loader'
+                    'twig-loader'
                 ]
             },
             {
@@ -76,5 +75,5 @@ module.exports = {
                 ]
             }
         ]
-    }
+    },
 };

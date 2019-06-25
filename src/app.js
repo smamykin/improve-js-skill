@@ -145,7 +145,8 @@ new Swiper('.swiper-container', {
             });
 
             let div = document.createElement('div');
-            div.innerHTML = require('./templates/addPersonForm.twig').default;
+            let template = require('./templates/addPersonForm.twig');
+            div.innerHTML = template();
             let form = div.querySelector('form');
             form.addEventListener('submit', onAddPerson);
             form.addEventListener('submit', function(){
