@@ -12,6 +12,11 @@ const dbPersonList = getIDBPersonList();
             return store.getAll();
         }).then(function (people) {
             console.log(people);
+            for (let person of people){
+                if (person.photo){
+                    person.photo = window.URL.createObjectURL(person.photo);
+                }
+            }
             container.innerHTML = require('./../templates/peopleList.twig')({'people': people});
         }).catch(function (reason) {
             console.error(reason);
@@ -32,14 +37,15 @@ const dbPersonList = getIDBPersonList();
         let form = e.target,
             name = form['person_name'].value,
             title = form['person_title'].value,
-            quote = form['person_quote'].value;
+            quote = form['person_quote'].value,
+            photo = form['person_photo'].files[0];
 
         if (!name) {
             return;
         }
 
         dbPersonList.then(function (store) {
-            store.add({name, title, quote});
+            store.add({name, title, quote, photo});
             refreshPeopleList()
         }).catch(function (reason) {
             console.error(reason);
