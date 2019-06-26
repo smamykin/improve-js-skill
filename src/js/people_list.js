@@ -1,7 +1,24 @@
 import tingle from 'tingle.js';
 import getIDBPersonList from "./dbPersonList";
 
+const dbPersonList = getIDBPersonList();
+
+// add new person
 (function () {
+    const refreshPeopleList = function() {
+        let container = document.querySelector('.people_list_container');
+
+        dbPersonList.then(function (store) {
+            return store.getAll();
+        }).then(function (people) {
+            console.log(people);
+            container.innerHTML = require('./../templates/peopleList.twig')({'people': people});
+        }).catch(function (reason) {
+            console.error(reason);
+        })
+    };
+
+    refreshPeopleList();
 
     const addBtn = document.querySelector('.js-add_person');
     if (!addBtn) {
@@ -21,10 +38,9 @@ import getIDBPersonList from "./dbPersonList";
             return;
         }
 
-        const dbPersonList = getIDBPersonList();
-
         dbPersonList.then(function (store) {
             store.add({name, title, quote});
+            refreshPeopleList()
         }).catch(function (reason) {
             console.error(reason);
         });
@@ -39,6 +55,7 @@ import getIDBPersonList from "./dbPersonList";
     };
 
     const createModal = function(){
+        // noinspection JSPotentiallyInvalidConstructorUsage
         return new tingle.modal({
             footer: true,
             stickyFooter: false,
@@ -69,4 +86,3 @@ import getIDBPersonList from "./dbPersonList";
 
     addBtn.addEventListener('click', showAddPersonModal)
 })();
-

@@ -36,6 +36,18 @@ export default async function getIDBPersonList() {
         },
         async clear() {
             return (await dbPromise).clear(personListStoreName);
+        },
+        async getAll() {
+            let cursor = await (await dbPromise).transaction(personListStoreName).store.openCursor(),
+                container = [];
+
+            while (cursor) {
+                container.push(cursor.value);
+
+                cursor = await cursor.continue();
+            }
+
+            return container;
         }
     };
 }
