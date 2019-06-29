@@ -8,11 +8,14 @@ import getIDBPersonList from "./dbPersonList";
     const container = document.querySelector('.people_list_container'),
         addBtn = document.querySelector('.js-add_person'),
         dbPersonList = getIDBPersonList(),
-        getModal = () => {return _addModal || initAddFormModal()};
+        getModal = () => {
+            return _addModal || initAddFormModal()
+        };
 
     //process
     refreshPeopleList();
     addBtn && addBtn.addEventListener('click', () => getModal().open());
+
     //process end
 
     /**
@@ -23,6 +26,7 @@ import getIDBPersonList from "./dbPersonList";
             .then((store) => store.getAll())
             .then(preparePhotoUrls)
             .then(renderPeople)
+            .then(contextMenuOnPersonCard)
             .catch((reason) => console.error(reason))
     }
 
@@ -32,7 +36,7 @@ import getIDBPersonList from "./dbPersonList";
      * @param people
      * @returns {*}
      */
-    function preparePhotoUrls(people){
+    function preparePhotoUrls(people) {
         for (let person of people) {
             if (person.photo) {
                 person.photo = window.URL.createObjectURL(person.photo);
@@ -63,17 +67,18 @@ import getIDBPersonList from "./dbPersonList";
         }
 
         dbPersonList
-            .then((store) => { store.add({name, title, quote, photo}); })
+            .then((store) => {
+                store.add({name, title, quote, photo});
+            })
             .then(refreshPeopleList)
-            .catch((reason) => { console.error(reason);});
+            .catch((reason) => {
+                console.error(reason);
+            });
     }
 
     function createAddForm() {
-        const wrapper = document.createElement('div');
-
-        wrapper.innerHTML = require('./../templates/addPersonForm.twig')().trim();
-
-        return wrapper.firstElementChild;
+        const html = require('./../templates/addPersonForm.twig')();
+        return getElementFromTemplate(html);
     }
 
     function createModal() {
@@ -90,10 +95,70 @@ import getIDBPersonList from "./dbPersonList";
         const form = createAddForm();
 
         form.addEventListener('submit', onAddPersonSubmit);
-        form.addEventListener('submit', () => {modal.close()});
+        form.addEventListener('submit', () => {
+            modal.close()
+        });
 
         modal.setContent(form);
 
         return modal;
+    }
+
+    /**
+     * @todo refactor this function
+     */
+    function contextMenuOnPersonCard() {
+
+        let contextMenu;// only one element in the moment on the page
+        const body = document.querySelector('body');
+
+        container
+            .querySelectorAll('.js-person_card')
+            .forEach((element) => {
+                const personId = element.getAttribute('data-person_id');
+                element.addEventListener('contextmenu', (event) => {
+
+                    contextMenu && contextMenu.remove();
+
+                    event.preventDefault();
+                    event.stopImmediatePropagation();
+
+                    contextMenu = createContextMenu();
+
+                    contextMenu.style.top = event.clientY + 'px';
+                    contextMenu.style.left = event.clientX + 'px';
+
+                    contextMenu.addEventListener('click', (event) => {
+                        if (event.target.classList.contains('js-invite_btn')) {
+                            event.stopPropagation();
+
+                            invitePerson(personId);
+                        }
+                    });
+
+                    body.addEventListener('click', () => contextMenu.remove());
+                    body.addEventListener('contextmenu', () => contextMenu.remove());
+
+                    body.appendChild(contextMenu);
+                });
+            });
+    }
+
+    function createContextMenu() {
+        const html = require('./../templates/contextMenu.twig')();
+
+        return getElementFromTemplate(html);
+    }
+
+    function getElementFromTemplate(html) {
+        const wrapper = document.createElement('div');
+
+        wrapper.innerHTML = html.trim();
+
+        return wrapper.firstChild;
+    }
+
+    function invitePerson() {
+        return false;
     }
 })();
