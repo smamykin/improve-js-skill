@@ -5,32 +5,43 @@ const dbPersonList = getIDBPersonList();
 
 // add new person
 (function () {
-    const refreshPeopleList = function() {
-        let container = document.querySelector('.people_list_container');
+    const container = document.querySelector('.people_list_container'),
+        addBtn = document.querySelector('.js-add_person');
 
-        dbPersonList.then(function (store) {
-            return store.getAll();
-        }).then(function (people) {
-            console.log(people);
-            for (let person of people){
-                if (person.photo){
-                    person.photo = window.URL.createObjectURL(person.photo);
-                }
-            }
-            container.innerHTML = require('./../templates/peopleList.twig')({'people': people});
-        }).catch(function (reason) {
-            console.error(reason);
-        })
-    };
+    let addModal;
 
-    refreshPeopleList();
+    init();
 
-    const addBtn = document.querySelector('.js-add_person');
-    if (!addBtn) {
-        return;
+    function init() {
+        refreshPeopleList();
+
+        if (addBtn) {
+            addBtn.addEventListener('click', showAddPersonModal)
+        }
+
     }
 
-    const onAddPersonSubmit = function (e) {
+    function onError(error) {
+        console.error(error);
+    }
+
+    function renderPeople(people) {
+        for (let person of people) {
+            if (person.photo) {
+                person.photo = window.URL.createObjectURL(person.photo);
+            }
+        }
+        container.innerHTML = require('./../templates/peopleList.twig')({'people': people});
+    }
+
+    function refreshPeopleList() {
+        dbPersonList
+            .then((store) => store.getAll())
+            .then(renderPeople)
+            .catch(onError)
+    }
+
+    function onAddPersonSubmit(e) {
         e.preventDefault();
         e.stopPropagation();
 
@@ -50,27 +61,27 @@ const dbPersonList = getIDBPersonList();
         }).catch(function (reason) {
             console.error(reason);
         });
-    };
+    }
 
-    const createAddForm = function () {
+    function createAddForm() {
         const wrapper = document.createElement('div');
         const template = require('../templates/addPersonForm.twig');
         wrapper.innerHTML = template().trim();
 
         return wrapper.firstElementChild;
-    };
+    }
 
-    const createModal = function(){
-        // noinspection JSPotentiallyInvalidConstructorUsage
+     function createModal() {
+
         return new tingle.modal({
             footer: true,
             stickyFooter: false,
             closeMethods: ['overlay', 'button', 'escape'],
             closeLabel: "Close",
         });
-    };
+    }
 
-    const initAddFormModal = function () {
+    function initAddFormModal(){
 
         const modal = createModal();
         const form = createAddForm();
@@ -82,13 +93,11 @@ const dbPersonList = getIDBPersonList();
 
         modal.setContent(form);
         return modal;
-    };
-    
-    let addModal;
-    const showAddPersonModal = function () {
+    }
+
+    function showAddPersonModal() {
         addModal = addModal || initAddFormModal();
         addModal.open();
-    };
+    }
 
-    addBtn.addEventListener('click', showAddPersonModal)
 })();
