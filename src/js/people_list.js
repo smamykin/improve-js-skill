@@ -1,78 +1,82 @@
 import tingle from 'tingle.js';
 import getIDBPersonList from "./dbPersonList";
 
-const dbPersonList = getIDBPersonList();
 
 // add new person
 (function () {
+    let _addModal; //use getModal()
     const container = document.querySelector('.people_list_container'),
-        addBtn = document.querySelector('.js-add_person');
+        addBtn = document.querySelector('.js-add_person'),
+        dbPersonList = getIDBPersonList(),
+        getModal = () => {return _addModal || initAddFormModal()};
 
-    let addModal;
+    //process
+    refreshPeopleList();
+    addBtn && addBtn.addEventListener('click', () => getModal().open());
+    //process end
 
-    init();
-
-    function init() {
-        refreshPeopleList();
-
-        if (addBtn) {
-            addBtn.addEventListener('click', showAddPersonModal)
-        }
-
+    /**
+     * pull from  db people list and render it into the page
+     */
+    function refreshPeopleList() {
+        dbPersonList
+            .then((store) => store.getAll())
+            .then(preparePhotoUrls)
+            .then(renderPeople)
+            .catch((reason) => console.error(reason))
     }
 
-    function onError(error) {
-        console.error(error);
-    }
-
-    function renderPeople(people) {
+    /**
+     * Because in the db is been storing File Objects we should convert it to string with url
+     *
+     * @param people
+     * @returns {*}
+     */
+    function preparePhotoUrls(people){
         for (let person of people) {
             if (person.photo) {
                 person.photo = window.URL.createObjectURL(person.photo);
             }
         }
+
+        return people;
+    }
+
+    function renderPeople(people) {
         container.innerHTML = require('./../templates/peopleList.twig')({'people': people});
     }
 
-    function refreshPeopleList() {
-        dbPersonList
-            .then((store) => store.getAll())
-            .then(renderPeople)
-            .catch(onError)
-    }
+    function onAddPersonSubmit(event) {
+        event.preventDefault();
+        event.stopPropagation();
 
-    function onAddPersonSubmit(e) {
-        e.preventDefault();
-        e.stopPropagation();
-
-        let form = e.target,
+        let form = event.target,
             name = form['person_name'].value,
             title = form['person_title'].value,
             quote = form['person_quote'].value,
             photo = form['person_photo'].files[0];
 
+
+        // form valid if we have a non-empty name field
         if (!name) {
             return;
         }
 
-        dbPersonList.then(function (store) {
-            store.add({name, title, quote, photo});
-            refreshPeopleList()
-        }).catch(function (reason) {
-            console.error(reason);
-        });
+        dbPersonList
+            .then((store) => { store.add({name, title, quote, photo}); })
+            .then(refreshPeopleList)
+            .catch((reason) => { console.error(reason);});
     }
 
     function createAddForm() {
         const wrapper = document.createElement('div');
-        const template = require('../templates/addPersonForm.twig');
-        wrapper.innerHTML = template().trim();
+
+        wrapper.innerHTML = require('./../templates/addPersonForm.twig')().trim();
 
         return wrapper.firstElementChild;
     }
 
-     function createModal() {
-
+    function createModal() {
         return new tingle.modal({
             footer: true,
             stickyFooter: false,
@@ -81,23 +85,15 @@ const dbPersonList = getIDBPersonList();
         });
     }
 
-    function initAddFormModal(){
-
+    function initAddFormModal() {
         const modal = createModal();
         const form = createAddForm();
 
         form.addEventListener('submit', onAddPersonSubmit);
-        form.addEventListener('submit', function () {
-            modal.close()
-        });
+        form.addEventListener('submit', () => {modal.close()});
 
         modal.setContent(form);
+
         return modal;
     }
-
-    function showAddPersonModal() {
-        addModal = addModal || initAddFormModal();
-        addModal.open();
-    }
-
 })();
