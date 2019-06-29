@@ -4,8 +4,13 @@ import getIDBPersonList from "./dbPersonList";
 
 // add new person
 (function () {
-    let _addModal; //use getModal()
-    const container = document.querySelector('.people_list_container'),
+
+    let _addModal,//use getModal()
+        _contextMenu; //only one context menu on the page in a moment
+
+
+    const body = document.querySelector('body'),
+        container = document.querySelector('.people_list_container'),
         addBtn = document.querySelector('.js-add_person'),
         dbPersonList = getIDBPersonList(),
         getModal = () => {
@@ -104,43 +109,43 @@ import getIDBPersonList from "./dbPersonList";
         return modal;
     }
 
-    /**
-     * @todo refactor this function
-     */
-    function contextMenuOnPersonCard() {
 
-        let contextMenu;// only one element in the moment on the page
-        const body = document.querySelector('body');
+    function getListenerContextMenu(personId) {
+        return (event) => {
+
+            _contextMenu && _contextMenu.remove();
+
+            event.preventDefault();
+            event.stopImmediatePropagation();
+
+            _contextMenu = createContextMenu();
+
+            _contextMenu.style.top = event.clientY + 'px';
+            _contextMenu.style.left = event.clientX + 'px';
+
+            _contextMenu.addEventListener('click', (event) => {
+                if (event.target.classList.contains('js-invite_btn')) {
+                    event.stopPropagation();
+
+                    invitePerson(personId);
+                }
+            });
+
+            body.addEventListener('click', () => _contextMenu.remove());
+            body.addEventListener('contextmenu', () => _contextMenu.remove());
+
+            body.appendChild(_contextMenu);
+        };
+    }
+
+    function contextMenuOnPersonCard() {
 
         container
             .querySelectorAll('.js-person_card')
             .forEach((element) => {
                 const personId = element.getAttribute('data-person_id');
-                element.addEventListener('contextmenu', (event) => {
 
-                    contextMenu && contextMenu.remove();
-
-                    event.preventDefault();
-                    event.stopImmediatePropagation();
-
-                    contextMenu = createContextMenu();
-
-                    contextMenu.style.top = event.clientY + 'px';
-                    contextMenu.style.left = event.clientX + 'px';
-
-                    contextMenu.addEventListener('click', (event) => {
-                        if (event.target.classList.contains('js-invite_btn')) {
-                            event.stopPropagation();
-
-                            invitePerson(personId);
-                        }
-                    });
-
-                    body.addEventListener('click', () => contextMenu.remove());
-                    body.addEventListener('contextmenu', () => contextMenu.remove());
-
-                    body.appendChild(contextMenu);
-                });
+                element.addEventListener('contextmenu', getListenerContextMenu(personId));
             });
     }
 
