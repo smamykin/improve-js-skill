@@ -98,6 +98,23 @@
   //  padding: 5px;
   //
   //}
+  .person_list_btn {
+    position: relative;
+    .loader-inner {
+      position:absolute;
+      top: 0;
+      right:0;
+      bottom: 0;
+      left: 0;
+      background-color: $primaryOpposite;
+      padding: 7px;
+      & > div {
+        background-color: $textOpposite;
+      }
+    }
+  }
+
+
 }
 
 .person_list_btn {
@@ -107,16 +124,16 @@
   border-radius: 2px;
   margin-top: 10px;
   cursor: pointer;
-  box-sizing:border-box;
-  text-align:center;
+  box-sizing: border-box;
+  text-align: center;
 
   &.w_100 {
-    width:100%;
+    width: 100%;
   }
 
   &:hover, &:active {
     color: $textOpposite;
     background-color: $primaryOpposite;
-    border: $primaryOpposite
+    border-color: $primaryOpposite
   }
 }

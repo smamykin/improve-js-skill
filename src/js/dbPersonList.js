@@ -1,6 +1,6 @@
 import {openDB} from 'idb';
 
-export default async function getIDBPersonList() {
+export default function getIDBPersonList() {
     const dbName = 'app';
     const personListStoreName = 'person_list';
     const version = 1;
@@ -10,7 +10,10 @@ export default async function getIDBPersonList() {
             for (let i = oldVersion; i < newVersion; ++i) {
                 switch (oldVersion) {
                     case 0:
-                        db.createObjectStore(personListStoreName, {autoIncrement: true});
+                        db.createObjectStore(personListStoreName, {
+                            keyPath:'id',
+                            autoIncrement: true
+                        });
                         break;
                 }
             }
@@ -28,8 +31,8 @@ export default async function getIDBPersonList() {
         async add(val) {
             return (await dbPromise).add(personListStoreName, val);
         },
-        async put(key, val) {
-            return (await dbPromise).put(personListStoreName, val, key);
+        async put(val) {
+            return (await dbPromise).put(personListStoreName, val);
         },
         async delete(key) {
             return (await dbPromise).delete(personListStoreName, key);
@@ -43,6 +46,7 @@ export default async function getIDBPersonList() {
 
             while (cursor) {
                 container.push(cursor.value);
+
 
                 cursor = await cursor.continue();
             }

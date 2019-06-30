@@ -1,5 +1,7 @@
+
 import tingle from 'tingle.js';
 import getIDBPersonList from "./dbPersonList";
+import Loader from "./Loader";
 
 
 // add new person
@@ -13,6 +15,7 @@ import getIDBPersonList from "./dbPersonList";
         container = document.querySelector('.people_list_container'),
         addBtn = document.querySelector('.js-add_person'),
         dbPersonList = getIDBPersonList(),
+        loaderHtml = '<div class="loader-inner ball-beat"><div></div><div></div><div></div></div>',
         getModal = () => {
             return _addModal || initAddFormModal()
         };
@@ -27,8 +30,7 @@ import getIDBPersonList from "./dbPersonList";
      * pull from  db people list and render it into the page
      */
     function refreshPeopleList() {
-        dbPersonList
-            .then((store) => store.getAll())
+        dbPersonList.getAll()
             .then(preparePhotoUrls)
             .then(renderPeople)
             .then(contextMenuOnPersonCard)
@@ -71,10 +73,7 @@ import getIDBPersonList from "./dbPersonList";
             return;
         }
 
-        dbPersonList
-            .then((store) => {
-                store.add({name, title, quote, photo});
-            })
+        dbPersonList.add({name, title, quote, photo})
             .then(refreshPeopleList)
             .catch((reason) => {
                 console.error(reason);
@@ -126,8 +125,9 @@ import getIDBPersonList from "./dbPersonList";
             _contextMenu.addEventListener('click', (event) => {
                 if (event.target.classList.contains('js-invite_btn')) {
                     event.stopPropagation();
+                    const loader = new Loader(event.target, loaderHtml);
 
-                    invitePerson(personId);
+                    invitePerson(personId, loader);
                 }
             });
 
@@ -143,7 +143,7 @@ import getIDBPersonList from "./dbPersonList";
         container
             .querySelectorAll('.js-person_card')
             .forEach((element) => {
-                const personId = element.getAttribute('data-person_id');
+                const personId = +element.getAttribute('data-person_id');
 
                 element.addEventListener('contextmenu', getListenerContextMenu(personId));
             });
@@ -163,7 +163,60 @@ import getIDBPersonList from "./dbPersonList";
         return wrapper.firstChild;
     }
 
-    function invitePerson() {
+    function invitePerson(personId, loader) {
+
+        loader.on();
+        dbPersonList
+            .get(personId)
+            .then(checkRating)
+            .then(checkNonInvited)
+            .then(isTicketsAreAvailable)
+            .then(commitInvitation)
+            .then(()=>alert('success'))
+            .catch(onInviteError)
+            .finally(()=>{loader.off()});
+
         return false;
     }
+
+    async function checkRating(person){
+        await sleep();
+        if (randomBool()){
+            return person;
+        }
+        throw 'the person\'s rating is too low!';
+    }
+    async function checkNonInvited(person){
+        await sleep();
+        if (person.isInvited){
+            throw 'the person is already invited!'
+        }
+        return person;
+    }
+    async function isTicketsAreAvailable(person){
+        await sleep();
+        if (randomBool()){
+            return person;
+        }
+        throw 'tickets are over!';
+    }
+    async function commitInvitation(person){
+        await sleep();
+        return await dbPersonList.put({...person, 'isInvited':true})
+            .catch(onInviteError)
+    }
+
+    function onInviteError(e) {
+        alert(e);
+    }
 })();
+
+function sleep(){
+    return new Promise((resolve)=>{
+        setTimeout(resolve,2000);
+    });
+}
+
+function randomBool(){
+    return Math.random() < 0.5;
+}
