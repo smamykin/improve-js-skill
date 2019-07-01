@@ -4,10 +4,14 @@
   "description": "This is a homework that I make up for myself.",
   "main": "index.js",
   "dependencies": {
-    "swiper": "^4.5.0"
+    "idb": "^4.0.3",
+    "loaders.css": "^0.1.2",
+    "swiper": "^4.5.0",
+    "tingle.js": "^0.15.1"
   },
   "devDependencies": {
     "@babel/core": "^7.4.5",
+    "@babel/polyfill": "^7.4.4",
     "@babel/preset-env": "^7.4.5",
     "@fortawesome/fontawesome-free": "^5.9.0",
     "babel-loader": "^8.0.6",
@@ -20,7 +24,7 @@
     "raw-loader": "^3.0.0",
     "sass-loader": "^7.1.0",
     "style-loader": "^0.23.1",
-    "twig-html-loader": "^0.1.6",
+    "twig-loader": "^0.5.1",
     "webpack": "^4.33.0",
     "webpack-cli": "^3.3.3",
     "webpack-dev-server": "^3.7.1"
