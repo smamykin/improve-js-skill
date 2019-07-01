@@ -1,0 +1,11 @@
+{% extends "./templates/base.twig" %}
+
+{% block header %}
+    {% include "./templates/header.twig" with {'data_is_hide' : 'data-is_hide'}%}
+{% endblock %}
+
+{% block content %}
+    {% include './templates/swiper.twig' %}
+    {% include './templates/advantages.twig' %}
+    {% include './templates/emploee_main.twig' %}
+{% endblock %}

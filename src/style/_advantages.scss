@@ -1,0 +1,30 @@
+@import "variables";
+.advantages_container {
+  margin-top: 100px;
+
+  .header {
+    text-align:center;
+  }
+  .advantages {
+    display: flex;
+    align-content: space-between;
+
+    .item {
+      padding: 15px 5px;
+      margin: 0 15px;
+      box-shadow: 0 0 7px black;
+      border-radius: 5px;
+      color: $textPrimary;
+      .icon {
+        text-align: center;
+        font-size: 150px;
+      }
+
+      .text {
+        text-align: center;
+        font-size: 24px;
+        margin: 10px 0;
+      }
+    }
+  }
+}

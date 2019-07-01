@@ -1,0 +1,22 @@
+@import "variables";
+
+body .footer {
+  background-color: $primaryOpposite;
+  text-align:center;
+  height: 100px;
+  padding-top:40px;
+  box-sizing:border-box;
+  margin-top:15px;
+  a {
+  color:$textOpposite;
+  }
+  i{
+    font-size: 12px;
+    color:$textOpposite;
+  }
+}
+.currencies {
+  float:right;
+  color:$textOpposite;
+  margin-right:20px;
+}
