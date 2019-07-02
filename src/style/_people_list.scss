@@ -137,3 +137,12 @@
     border-color: $primaryOpposite
   }
 }
+
+.search_container{
+  input {
+    color: $textPrimary;
+    width: 100%;
+    font-size:24px;
+    margin:14px;
+  }
+}
