@@ -6,7 +6,6 @@ export default function getIDBPersonList() {
     const version = 1;
     const dbPromise = openDB(dbName, version, {
         upgrade(db, oldVersion, newVersion, transaction) {
-            debugger;
             for (let i = oldVersion; i < newVersion; ++i) {
                 switch (oldVersion) {
                     case 0:

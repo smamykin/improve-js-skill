@@ -1,8 +1,8 @@
-
 import tingle from 'tingle.js';
 import getIDBPersonList from "./dbPersonList";
 import Loader from "./Loader";
-import {getElementFromHtmlString, randomBool, sleep} from "./tools";
+import {getElementFromHtmlString} from "./tools";
+import invite from "./Invitation";
 
 
 // add new person
@@ -56,6 +56,8 @@ import {getElementFromHtmlString, randomBool, sleep} from "./tools";
 
     function renderPeople(people) {
         container.innerHTML = require('./../templates/peopleList.twig')({'people': people});
+
+        return people;
     }
 
     function onAddPersonSubmit(event) {
@@ -126,9 +128,16 @@ import {getElementFromHtmlString, randomBool, sleep} from "./tools";
             _contextMenu.addEventListener('click', (event) => {
                 if (event.target.classList.contains('js-invite_btn')) {
                     event.stopPropagation();
+
                     const loader = new Loader(event.target, loaderHtml);
 
-                    invitePerson(personId, loader);
+                    loader.on();
+                    invite(personId)
+                        .then(() => alert('success'))
+                        .catch((e) => alert(e))
+                        .finally(() => {
+                            loader.off()
+                        });
                 }
             });
 
@@ -154,54 +163,6 @@ import {getElementFromHtmlString, randomBool, sleep} from "./tools";
         const html = require('./../templates/contextMenu.twig')();
 
         return getElementFromHtmlString(html);
-    }
-
-    function invitePerson(personId, loader) {
-
-        loader.on();
-        dbPersonList
-            .get(personId)
-            .then(checkRating)
-            .then(checkNonInvited)
-            .then(isTicketsAreAvailable)
-            .then(commitInvitation)
-            .then(()=>alert('success'))
-            .catch(onInviteError)
-            .finally(()=>{loader.off()});
-
-        return false;
-    }
-
-    async function checkRating(person){
-        await sleep();
-        if (randomBool()){
-            return person;
-        }
-        throw 'the person\'s rating is too low!';
-    }
-    async function checkNonInvited(person){
-        await sleep();
-        if (person.isInvited){
-            throw 'the person is already invited!'
-        }
-        return person;
-    }
-    async function isTicketsAreAvailable(person){
-        await sleep();
-        if (randomBool()){
-            return person;
-        }
-        throw 'tickets are over!';
-    }
-
-    async function commitInvitation(person){
-        await sleep();
-        return await dbPersonList.put({...person, 'isInvited':true})
-            .catch(onInviteError)
-    }
-
-    function onInviteError(e) {
-        alert(e);
     }
 })();
 
