@@ -2,6 +2,7 @@
 import tingle from 'tingle.js';
 import getIDBPersonList from "./dbPersonList";
 import Loader from "./Loader";
+import {getElementFromHtmlString, randomBool, sleep} from "./tools";
 
 
 // add new person
@@ -82,7 +83,7 @@ import Loader from "./Loader";
 
     function createAddForm() {
         const html = require('./../templates/addPersonForm.twig')();
-        return getElementFromTemplate(html);
+        return getElementFromHtmlString(html);
     }
 
     function createModal() {
@@ -152,15 +153,7 @@ import Loader from "./Loader";
     function createContextMenu() {
         const html = require('./../templates/contextMenu.twig')();
 
-        return getElementFromTemplate(html);
-    }
-
-    function getElementFromTemplate(html) {
-        const wrapper = document.createElement('div');
-
-        wrapper.innerHTML = html.trim();
-
-        return wrapper.firstChild;
+        return getElementFromHtmlString(html);
     }
 
     function invitePerson(personId, loader) {
@@ -200,6 +193,7 @@ import Loader from "./Loader";
         }
         throw 'tickets are over!';
     }
+
     async function commitInvitation(person){
         await sleep();
         return await dbPersonList.put({...person, 'isInvited':true})
@@ -211,12 +205,3 @@ import Loader from "./Loader";
     }
 })();
 
-function sleep(){
-    return new Promise((resolve)=>{
-        setTimeout(resolve,2000);
-    });
-}
-
-function randomBool(){
-    return Math.random() < 0.5;
-}
