@@ -115,37 +115,36 @@ import invite from "./Invitation";
     function getListenerContextMenu(personId) {
         return (event) => {
 
-            _contextMenu && _contextMenu.remove();
-
             event.preventDefault();
             event.stopImmediatePropagation();
+
+            _contextMenu && _contextMenu.remove();
 
             _contextMenu = createContextMenu();
 
             _contextMenu.style.top = event.pageY + 'px';
             _contextMenu.style.left = event.pageX + 'px';
-
-            _contextMenu.addEventListener('click', (event) => {
-                if (event.target.classList.contains('js-invite_btn')) {
-                    event.stopPropagation();
-
-                    const loader = new Loader(event.target, loaderHtml);
-
-                    loader.on();
-                    invite(personId)
-                        .then(() => alert('success'))
-                        .catch((e) => alert(e))
-                        .finally(() => {
-                            loader.off()
-                        });
-                }
-            });
+            _contextMenu.addEventListener('click', onInvite.bind(null, personId, loaderHtml));
 
             body.addEventListener('click', () => _contextMenu.remove());
             body.addEventListener('contextmenu', () => _contextMenu.remove());
 
             body.appendChild(_contextMenu);
         };
+    }
+
+    function onInvite(personId, loaderHtml, event) {
+        if (event.target.classList.contains('js-invite_btn')) {
+            event.stopPropagation();
+
+            const loader = new Loader(event.target, loaderHtml);
+            loader.on();
+
+            invite(personId)
+                .then(() => alert('success'))
+                .catch((e) => alert(e))
+                .finally(() => loader.off());
+        }
     }
 
     function contextMenuOnPersonCard() {
