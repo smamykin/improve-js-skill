@@ -119,8 +119,8 @@ import Loader from "./Loader";
 
             _contextMenu = createContextMenu();
 
-            _contextMenu.style.top = event.clientY + 'px';
-            _contextMenu.style.left = event.clientX + 'px';
+            _contextMenu.style.top = event.pageY + 'px';
+            _contextMenu.style.left = event.pageX + 'px';
 
             _contextMenu.addEventListener('click', (event) => {
                 if (event.target.classList.contains('js-invite_btn')) {
