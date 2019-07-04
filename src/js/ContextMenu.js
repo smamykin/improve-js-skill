@@ -26,6 +26,8 @@ ContextMenu.prototype.addCloseEvents = function (events, target) {
 
     let onClose = (e) => {
         e.preventDefault();
+        e.stopPropagation();
+
         this._el.remove();
         events.forEach((eventName) => target.removeEventListener(eventName, onClose));
     };

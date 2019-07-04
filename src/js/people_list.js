@@ -12,7 +12,6 @@ const selectors ={
         container: '.people_list_container'
     },
     addBtn = document.querySelector(selectors.addBtn),
-    dbPersonList = getIDBPersonList(),
     loaderHtml = '<div class="loader-inner ball-beat"><div></div><div></div><div></div></div>',
     getModal = () => {
         _addModal = _addModal || createAddFormModal(onAddPersonSubmit);
@@ -29,7 +28,7 @@ addBtn && addBtn.addEventListener('click', () => getModal().open());
  * pull from  db people list and render it into the page
  */
 function refreshPeopleList() {
-    dbPersonList.getAll()
+    getIDBPersonList().getAll()
         .then(preparePhotoUrls)
         .then(renderPeople)
         .then(initContextMenu)
@@ -74,7 +73,7 @@ function onAddPersonSubmit(event) {
 
     checkForm(event.target)
         .then(createPersonFromForm)
-        .then(dbPersonList.add)
+        .then(getIDBPersonList().add)
         .then(refreshPeopleList)
         .catch((reason) => {
             console.error(reason);

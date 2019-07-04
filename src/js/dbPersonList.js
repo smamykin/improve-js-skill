@@ -1,6 +1,12 @@
 import {openDB} from 'idb';
 
-export default function getIDBPersonList() {
+let db;
+const getIDBPersonList = function(){
+    db  = db || createIDBPersonList();
+    return db;
+};
+
+function createIDBPersonList() {
     const dbName = 'app';
     const personListStoreName = 'person_list';
     const version = 1;
@@ -54,3 +60,5 @@ export default function getIDBPersonList() {
         }
     };
 }
+
+export default getIDBPersonList;
