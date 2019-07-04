@@ -6,6 +6,7 @@
   "dependencies": {
     "idb": "^4.0.3",
     "loaders.css": "^0.1.2",
+    "rxjs": "^6.5.2",
     "swiper": "^4.5.0",
     "tingle.js": "^0.15.1"
   },

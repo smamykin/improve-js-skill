@@ -3,15 +3,25 @@ import Loader from "./Loader";
 import invite from "./Invitation";
 import ContextMenuFactory from "./ContextMenu";
 import createAddFormModal from "./AddFormModal";
-
+import {fromEvent, from} from "rxjs";
+import {
+    combineAll,
+    debounceTime, exhaustMap,
+    filter,
+    map, mergeAll,
+    scan, take, takeLast,
+    withLatestFrom
+} from "rxjs/operators";
 
 let _addModal;//use getModal()
 
 const selectors ={
         addBtn: '.js-add_person',
-        container: '.people_list_container'
+        container: '.people_list_container',
+        search: '.js-search_container input[type="search"]'
     },
     addBtn = document.querySelector(selectors.addBtn),
+    search = document.querySelector(selectors.search),
     loaderHtml = '<div class="loader-inner ball-beat"><div></div><div></div><div></div></div>',
     getModal = () => {
         _addModal = _addModal || createAddFormModal(onAddPersonSubmit);
@@ -22,7 +32,27 @@ const selectors ={
 refreshPeopleList();
 addBtn && addBtn.addEventListener('click', () => getModal().open());
 
-//process end
+
+fromEvent(search,'input')
+    .pipe(debounceTime(2000))
+    .pipe( map(event => {return event.target["value"];}))
+    .pipe(
+        exhaustMap((str) => from(getIDBPersonList().getAll())),
+    )
+    .pipe(map(x => {console.log(x); return x;}))
+    .pipe(filter((str)=> { console.log(str);
+    // return (new RegExp('^'+ str)).test(person.name);
+        return true;
+    }))
+    .pipe(scan((acc,value)=> {
+        console.log(acc);
+        acc.push(value);
+        return acc;
+    }))
+    .subscribe((x) => console.log(x));
+
+
+
 
 /**
  * pull from  db people list and render it into the page
