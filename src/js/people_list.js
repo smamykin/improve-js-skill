@@ -9,9 +9,7 @@ import ContextMenuFactory from "./ContextMenu";
 // add new person
 (function () {
 
-    let _addModal,//use getModal()
-        _contextMenu; //only one context menu on the page in a moment
-
+    let _addModal;//use getModal()
 
     const body = document.querySelector('body'),
         container = document.querySelector('.people_list_container'),
@@ -35,7 +33,7 @@ import ContextMenuFactory from "./ContextMenu";
         dbPersonList.getAll()
             .then(preparePhotoUrls)
             .then(renderPeople)
-            .then(contextMenuOnPersonCard)
+            .then(initContextMenu)
             .catch((reason) => console.error(reason))
     }
 
@@ -55,10 +53,10 @@ import ContextMenuFactory from "./ContextMenu";
         return people;
     }
 
-    function renderPeople(people) {
+    async function renderPeople(people) {
         container.innerHTML = require('./../templates/peopleList.twig')({'people': people});
 
-        return people;
+        return Array.from(container.children);
     }
 
     function onAddPersonSubmit(event) {
@@ -112,28 +110,28 @@ import ContextMenuFactory from "./ContextMenu";
         return modal;
     }
 
-
-    function addListenerContextMenu(element) {
-        const personId = +element.getAttribute('data-person_id');
-        element.addEventListener('contextmenu', (event) => {
-            event.preventDefault();
-            event.stopImmediatePropagation();
-
-            ContextMenuFactory
-                .create()
-                .setPosition(event.pageX, event.pageY)
-                .on('click', onInvite.bind(null, personId, loaderHtml))
-                .addCloseEvents(['click', 'contextmenu'], body)
-                .show();
+    async function initContextMenu(personCards) {
+        personCards.forEach((element) => {
+            element.addEventListener('contextmenu', onCardContextMenu);
         });
+
+        return personCards;
     }
 
-    function contextMenuOnPersonCard() {
-        container.querySelectorAll('.js-person_card')
-            .forEach(addListenerContextMenu);
+    function onCardContextMenu(event) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+
+        const personId = +event.target.getAttribute('data-person_id');
+        ContextMenuFactory
+            .create()
+            .setPosition(event.pageX, event.pageY)
+            .on('click', onInvite.bind(null, personId), true)
+            .addCloseEvents(['click', 'contextmenu'], body)
+            .show();
     }
 
-    function onInvite(personId, loaderHtml, event) {
+    function onInvite(personId, event) {
         if (!event.target.classList.contains('js-invite_btn')) {
             return;
         }

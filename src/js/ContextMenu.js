@@ -35,8 +35,8 @@ ContextMenu.prototype.addCloseEvents = function (events, target) {
     return this;
 };
 
-ContextMenu.prototype.on = function (type, callback) {
-    this._el.addEventListener(type, callback);
+ContextMenu.prototype.on = function (type, callback, isCapture) {
+    this._el.addEventListener(type, callback, !!isCapture);
     return this;
 };
 
