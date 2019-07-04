@@ -12,7 +12,6 @@ import ContextMenuFactory from "./ContextMenu";
     let _addModal;//use getModal()
 
     const body = document.querySelector('body'),
-        container = document.querySelector('.people_list_container'),
         addBtn = document.querySelector('.js-add_person'),
         dbPersonList = getIDBPersonList(),
         loaderHtml = '<div class="loader-inner ball-beat"><div></div><div></div><div></div></div>',
@@ -43,43 +42,30 @@ import ContextMenuFactory from "./ContextMenu";
      * @param people
      * @returns {*}
      */
-    function preparePhotoUrls(people) {
+    async function preparePhotoUrls(people) {
         for (let person of people) {
-            if (person.photo) {
-                person.photo = window.URL.createObjectURL(person.photo);
-            }
+            if (!person.photo) continue;
+
+            person.photo = window.URL.createObjectURL(person.photo);
         }
 
         return people;
     }
 
     async function renderPeople(people) {
+        const container = document.querySelector('.people_list_container');
+
         container.innerHTML = require('./../templates/peopleList.twig')({'people': people});
 
         return Array.from(container.children);
     }
 
-    function onAddPersonSubmit(event) {
-        event.preventDefault();
-        event.stopPropagation();
+    async function initContextMenu(personCards) {
+        personCards.forEach((element) => {
+            element.addEventListener('contextmenu', onCardContextMenu);
+        });
 
-        let form = event.target,
-            name = form['person_name'].value,
-            title = form['person_title'].value,
-            quote = form['person_quote'].value,
-            photo = form['person_photo'].files[0];
-
-
-        // form valid if we have a non-empty name field
-        if (!name) {
-            return;
-        }
-
-        dbPersonList.add({name, title, quote, photo})
-            .then(refreshPeopleList)
-            .catch((reason) => {
-                console.error(reason);
-            });
+        return personCards;
     }
 
     function createAddForm() {
@@ -110,19 +96,42 @@ import ContextMenuFactory from "./ContextMenu";
         return modal;
     }
 
-    async function initContextMenu(personCards) {
-        personCards.forEach((element) => {
-            element.addEventListener('contextmenu', onCardContextMenu);
-        });
+    function onAddPersonSubmit(event) {
+        event.preventDefault();
+        event.stopPropagation();
 
-        return personCards;
+        checkForm(event.target)
+            .then(createPersonFromForm)
+            .then(dbPersonList.add)
+            .then(refreshPeopleList)
+            .catch((reason) => {
+                console.error(reason);
+            });
+    }
+
+    async function checkForm(form){
+        if (!form['person_name'].value){
+            throw 'The field "name" should not be empty'
+        }
+
+        return form;
+    }
+
+    async function createPersonFromForm(form) {
+        return {
+            name: form['person_name'].value,
+            title: form['person_title'].value,
+            quote: form['person_quote'].value,
+            photo: form['person_photo'].files[0]
+        };
     }
 
     function onCardContextMenu(event) {
         event.preventDefault();
         event.stopImmediatePropagation();
 
-        const personId = +event.target.getAttribute('data-person_id');
+        const personId = +event.currentTarget.getAttribute('data-person_id');
+
         ContextMenuFactory
             .create()
             .setPosition(event.pageX, event.pageY)
@@ -139,8 +148,8 @@ import ContextMenuFactory from "./ContextMenu";
         event.stopPropagation();
 
         const loader = new Loader(event.target, loaderHtml);
-        loader.on();
 
+        loader.on();
         invite(personId)
             .then(() => alert('success'))
             .catch((e) => alert(e))
