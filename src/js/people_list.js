@@ -1,9 +1,8 @@
-import tingle from 'tingle.js';
 import getIDBPersonList from "./dbPersonList";
 import Loader from "./Loader";
-import {getElementFromHtmlString} from "./tools";
 import invite from "./Invitation";
 import ContextMenuFactory from "./ContextMenu";
+import createAddFormModal from "./AddFormModal";
 
 
 let _addModal;//use getModal()
@@ -16,7 +15,7 @@ const selectors ={
     dbPersonList = getIDBPersonList(),
     loaderHtml = '<div class="loader-inner ball-beat"><div></div><div></div><div></div></div>',
     getModal = () => {
-        return _addModal || initAddFormModal()
+        return _addModal || createAddFormModal(onAddPersonSubmit)
     };
 
 //process
@@ -66,34 +65,6 @@ async function initContextMenu(personCards) {
     });
 
     return personCards;
-}
-
-function createAddForm() {
-    const html = require('./../templates/addPersonForm.twig')();
-    return getElementFromHtmlString(html);
-}
-
-function createModal() {
-    return new tingle.modal({
-        footer: true,
-        stickyFooter: false,
-        closeMethods: ['overlay', 'button', 'escape'],
-        closeLabel: "Close",
-    });
-}
-
-function initAddFormModal() {
-    const modal = createModal();
-    const form = createAddForm();
-
-    form.addEventListener('submit', onAddPersonSubmit);
-    form.addEventListener('submit', () => {
-        modal.close()
-    });
-
-    modal.setContent(form);
-
-    return modal;
 }
 
 function onAddPersonSubmit(event) {
