@@ -3,6 +3,7 @@ import getIDBPersonList from "./dbPersonList";
 import Loader from "./Loader";
 import {getElementFromHtmlString} from "./tools";
 import invite from "./Invitation";
+import ContextMenuFactory from "./ContextMenu";
 
 
 // add new person
@@ -112,56 +113,40 @@ import invite from "./Invitation";
     }
 
 
-    function getListenerContextMenu(personId) {
-        return (event) => {
-
+    function addListenerContextMenu(element) {
+        const personId = +element.getAttribute('data-person_id');
+        element.addEventListener('contextmenu', (event) => {
             event.preventDefault();
             event.stopImmediatePropagation();
 
-            _contextMenu && _contextMenu.remove();
-
-            _contextMenu = createContextMenu();
-
-            _contextMenu.style.top = event.pageY + 'px';
-            _contextMenu.style.left = event.pageX + 'px';
-            _contextMenu.addEventListener('click', onInvite.bind(null, personId, loaderHtml));
-
-            body.addEventListener('click', () => _contextMenu.remove());
-            body.addEventListener('contextmenu', () => _contextMenu.remove());
-
-            body.appendChild(_contextMenu);
-        };
-    }
-
-    function onInvite(personId, loaderHtml, event) {
-        if (event.target.classList.contains('js-invite_btn')) {
-            event.stopPropagation();
-
-            const loader = new Loader(event.target, loaderHtml);
-            loader.on();
-
-            invite(personId)
-                .then(() => alert('success'))
-                .catch((e) => alert(e))
-                .finally(() => loader.off());
-        }
+            ContextMenuFactory
+                .create()
+                .setPosition(event.pageX, event.pageY)
+                .on('click', onInvite.bind(null, personId, loaderHtml))
+                .addCloseEvents(['click', 'contextmenu'], body)
+                .show();
+        });
     }
 
     function contextMenuOnPersonCard() {
-
-        container
-            .querySelectorAll('.js-person_card')
-            .forEach((element) => {
-                const personId = +element.getAttribute('data-person_id');
-
-                element.addEventListener('contextmenu', getListenerContextMenu(personId));
-            });
+        container.querySelectorAll('.js-person_card')
+            .forEach(addListenerContextMenu);
     }
 
-    function createContextMenu() {
-        const html = require('./../templates/contextMenu.twig')();
+    function onInvite(personId, loaderHtml, event) {
+        if (!event.target.classList.contains('js-invite_btn')) {
+            return;
+        }
 
-        return getElementFromHtmlString(html);
+        event.stopPropagation();
+
+        const loader = new Loader(event.target, loaderHtml);
+        loader.on();
+
+        invite(personId)
+            .then(() => alert('success'))
+            .catch((e) => alert(e))
+            .finally(() => loader.off());
     }
 })();
 
