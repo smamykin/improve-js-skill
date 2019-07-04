@@ -15,7 +15,8 @@ const selectors ={
     dbPersonList = getIDBPersonList(),
     loaderHtml = '<div class="loader-inner ball-beat"><div></div><div></div><div></div></div>',
     getModal = () => {
-        return _addModal || createAddFormModal(onAddPersonSubmit)
+        _addModal = _addModal || createAddFormModal(onAddPersonSubmit);
+        return _addModal;
     };
 
 //process
