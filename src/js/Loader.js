@@ -9,13 +9,10 @@ Loader.prototype.on = function(){
 
     this.container.style.height = this.container.getBoundingClientRect().height + 'px';
     this.container.innerHTML = this.loaderHTML;
-
-
 };
 
 Loader.prototype.off = function(){
     this.container.innerHTML = this._containerHTML;
-
     this._containerHTML = '';
 };
 

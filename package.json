@@ -4,8 +4,10 @@
   "description": "This is a homework that I make up for myself.",
   "main": "index.js",
   "dependencies": {
+    "animate.css": "^3.7.2",
     "idb": "^4.0.3",
     "loaders.css": "^0.1.2",
+    "rxjs": "^6.5.2",
     "swiper": "^4.5.0",
     "tingle.js": "^0.15.1"
   },
