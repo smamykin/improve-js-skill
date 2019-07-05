@@ -4,14 +4,7 @@ import invite from "./Invitation";
 import ContextMenuFactory from "./ContextMenu";
 import createAddFormModal from "./AddFormModal";
 import {fromEvent, from} from "rxjs";
-import {
-    combineAll,
-    debounceTime, exhaustMap,
-    filter,
-    map, mergeAll,
-    scan, take, takeLast,
-    withLatestFrom
-} from "rxjs/operators";
+import {debounceTime, filter, map, mergeAll, mergeMap} from "rxjs/operators";
 
 let _addModal;//use getModal()
 
@@ -37,18 +30,12 @@ fromEvent(search,'input')
     .pipe(debounceTime(2000))
     .pipe( map(event => {return event.target["value"];}))
     .pipe(
-        exhaustMap((str) => from(getIDBPersonList().getAll())),
+        mergeMap((str) => {
+            return from(getIDBPersonList().getAll())
+            .pipe(mergeAll())
+            .pipe(filter((person)=> (new RegExp(str)).test(person.name)))
+        }),
     )
-    .pipe(map(x => {console.log(x); return x;}))
-    .pipe(filter((str)=> { console.log(str);
-    // return (new RegExp('^'+ str)).test(person.name);
-        return true;
-    }))
-    .pipe(scan((acc,value)=> {
-        console.log(acc);
-        acc.push(value);
-        return acc;
-    }))
     .subscribe((x) => console.log(x));
 
 
