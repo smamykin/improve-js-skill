@@ -4,7 +4,7 @@ import invite from "./Invitation";
 import ContextMenuFactory from "./ContextMenu";
 import createAddFormModal from "./AddFormModal";
 import {fromEvent, from} from "rxjs";
-import {debounceTime, filter, map, mergeAll, mergeMap} from "rxjs/operators";
+import {debounceTime, filter, map, mergeAll, mergeMap, scan} from "rxjs/operators";
 
 let _addModal;//use getModal()
 
@@ -34,12 +34,18 @@ fromEvent(search,'input')
             return from(getIDBPersonList().getAll())
             .pipe(mergeAll())
             .pipe(filter((person)=> (new RegExp(str)).test(person.name)))
+            .pipe(scan((acc, val)=> {
+                acc.push(val);
+                return acc;
+            },[]))
         }),
     )
-    .subscribe((x) => console.log(x));
-
-
-
+    .subscribe((peopleList) => {
+        console.dir(peopleList);
+        preparePhotoUrls(peopleList)
+            .then(renderPeople)
+            .then(initContextMenu)
+    },(e)=> console.error(e));
 
 /**
  * pull from  db people list and render it into the page
@@ -64,15 +70,16 @@ async function preparePhotoUrls(people) {
 
         person.photo = window.URL.createObjectURL(person.photo);
     }
-
+    console.log(people);
     return people;
 }
 
 async function renderPeople(people) {
     const container = document.querySelector(selectors.container);
-
+    console.log(people);
     container.innerHTML = require('./../templates/peopleList.twig')({'people': people});
-
+    console.log(container.children);
+    console.log(container);
     return Array.from(container.children);
 }
 
