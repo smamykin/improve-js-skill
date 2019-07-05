@@ -1,4 +1,5 @@
 import Swiper from 'swiper';
+import {fromEvent} from "rxjs";
 
 (function () {
     if (location.pathname !== '/') {
@@ -66,4 +67,26 @@ import Swiper from 'swiper';
     })(scrollContainer, header, document.querySelector('.js-scroll-swiper-link'));
 
 })();
+
+
+let advantages = document.querySelectorAll('.advantages .item');
+
+fromEvent(advantages,'mouseenter').subscribe((event) => {
+        animateCSS(event.target,'shake');
+    }
+);
+
+
+function animateCSS(element, animationName, callback) {
+    element.classList.add('animated', animationName);
+
+    function handleAnimationEnd() {
+        element.classList.remove('animated', animationName);
+        element.removeEventListener('animationend', handleAnimationEnd);
+
+        if (typeof callback === 'function') callback()
+    }
+
+    element.addEventListener('animationend', handleAnimationEnd)
+}
 
