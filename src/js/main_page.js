@@ -1,4 +1,5 @@
 import Swiper from 'swiper';
+import {fromEvent} from "rxjs";
 
 (function () {
     if (location.pathname !== '/') {
@@ -21,13 +22,13 @@ import Swiper from 'swiper';
     });
 
     const header = document.querySelector('body > .header'),
-        body = document.querySelector('body');
+        scrollContainer = document.querySelector('html');
 
     //hide header for cover picture
-    (function (body, header, showHideBoundary, hiddenClass) {
+    (function (scrollContainer, header, showHideBoundary, hiddenClass) {
         const hideShowHeader = () => {
             const hasClass = 0 < header.className.indexOf(hiddenClass);
-            let scrollTop = body.scrollTop;
+            let scrollTop = scrollContainer.scrollTop;
 
             if (!hasClass && showHideBoundary > scrollTop) {
                 header.className += ` ${hiddenClass}`
@@ -38,16 +39,16 @@ import Swiper from 'swiper';
 
         hideShowHeader();
 
-        body.addEventListener('scroll', hideShowHeader);
-    })(body, header, 100, 'hidden');
+        window.addEventListener('scroll', hideShowHeader);
+    })(scrollContainer, header, 100, 'hidden');
 
     //scroll further from a cover picture
-    (function (body, header, scrollLink) {
+    (function (scrollContainer, header, scrollLink) {
         const onClickOnScrollLink = () => {
 
             let id = setInterval(function () {
                 const end = scrollLink.offsetTop - header.offsetHeight;
-                const start = body.scrollTop;
+                const start = scrollContainer.scrollTop;
                 const pieceMax = 7;
 
                 let dist = end - start;
@@ -56,14 +57,36 @@ import Swiper from 'swiper';
                     return;
                 }
                 let piece = (dist < pieceMax) ? dist : pieceMax;
-                body.scrollTop = start + piece;
+                scrollContainer.scrollTop = start + piece;
             }, 0.01);
 
         };
 
         scrollLink.addEventListener('click', onClickOnScrollLink, false);
 
-    })(body, header, document.querySelector('.js-scroll-swiper-link'));
+    })(scrollContainer, header, document.querySelector('.js-scroll-swiper-link'));
 
 })();
+
+
+let advantages = document.querySelectorAll('.advantages .item');
+
+fromEvent(advantages,'mouseenter').subscribe((event) => {
+        animateCSS(event.target,'shake');
+    }
+);
+
+
+function animateCSS(element, animationName, callback) {
+    element.classList.add('animated', animationName);
+
+    function handleAnimationEnd() {
+        element.classList.remove('animated', animationName);
+        element.removeEventListener('animationend', handleAnimationEnd);
+
+        if (typeof callback === 'function') callback()
+    }
+
+    element.addEventListener('animationend', handleAnimationEnd)
+}
 

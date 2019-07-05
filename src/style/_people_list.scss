@@ -137,3 +137,16 @@
     border-color: $primaryOpposite
   }
 }
+
+.search_container{
+  input {
+    color: $textPrimary;
+    width: 100%;
+    font-size:$searchInputPeopleList;
+    margin:14px;
+  }
+}
+
+.tingle-modal--visible .tingle-modal-box {
+  animation: none;
+}
