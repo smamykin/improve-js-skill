@@ -115,7 +115,13 @@ task('app:compile', function(){
                     },
                     {
                         test: /\.twig$/,
-                        use: ['twig-loader'],
+                        use: [
+                            'twig-loader',
+                            'extract-loader',
+                            {
+                                loader:'html-loader',
+                            },
+                        ],
                     },
                     {
                         test:/\.(woff|woff2|eot|ttf|otf)$/,
