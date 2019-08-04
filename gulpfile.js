@@ -1,18 +1,16 @@
 const {src, dest, parallel, task, watch, series} = require('gulp'),
     browserSync = require('browser-sync').create(),
     rimraf = require('rimraf'),
-    twig = require('gulp-twig'),
     webpack = require('webpack-stream'),
     named = require('vinyl-named')
 ;
 
-// const sass = require('gulp-sass');
 // const spritesmith = require('gulp.spritesmith');
 // const rename = require('gulp-rename');
 
 
 /* -------- Paths ---------- */
-const path = (function(){
+const path = (function () {
     const baseDist = 'dist',
         baseSrc = './src';
 
@@ -54,27 +52,9 @@ task('server', function () {
 });
 //endregion
 
-//region html
-/* ------------ Html compile ------------- */
-task('templates:compile', function buildHTML() {
-    return src(path.templates.src)
-        .pipe(twig({
-            data: {
-                title: 'Gulp and Twig',
-                benefits: [
-                    'Fast',
-                    'Flexible',
-                    'Secure'
-                ]
-            }
-        }))
-        .pipe(dest(path.templates.dest))
-});
-//endregion
-
 //region js
-task('app:compile', function(){
-    return src(path.js.src)
+task('app:compile', function () {
+    return src([path.templates.src,path.js.src])
         .pipe(named())
         .pipe(webpack({
             mode: 'development',
@@ -114,17 +94,38 @@ task('app:compile', function(){
                         ],
                     },
                     {
-                        test: /\.twig$/,
+                        test: /src\/[^\/]+.twig$/,
                         use: [
-                            'twig-loader',
+                            {
+                                loader: 'file-loader',
+                                options: {
+                                    name: '[name].html',
+                                    outputPath: '../',
+                                    publicPath: '',
+                                }
+                            },
+                            'twig-html-loader',
                             'extract-loader',
                             {
-                                loader:'html-loader',
+                                loader: 'html-loader',
+                                options: {
+                                    attrs: ['script:src', 'img:src', 'link:href'],
+                                },
                             },
                         ],
                     },
                     {
-                        test:/\.(woff|woff2|eot|ttf|otf)$/,
+                        test: /templates\/.+\.twig$/,
+                        use: [
+                            'twig-loader',
+                            'extract-loader',
+                            {
+                                loader: 'html-loader',
+                            },
+                        ],
+                    },
+                    {
+                        test: /\.(woff|woff2|eot|ttf|otf)$/,
                         use: [
                             {
                                 loader: 'file-loader',
@@ -185,14 +186,11 @@ task('copy', parallel('copy:fonts', 'copy:images'));
 
 /* ------------ Watchers ------------- */
 task('watch', function () {
-    watch(path.watch.src, series(
-        'templates:compile',
-        'app:compile'
-    ));
+    watch(path.watch.src, series('app:compile'));
 });
 
 task('default', series(
     'clean',
-    parallel('templates:compile', 'app:compile',/* 'sprite', 'copy'*/),
+    parallel('app:compile'/* 'sprite', 'copy'*/),
     parallel('watch', 'server'),
 ));
