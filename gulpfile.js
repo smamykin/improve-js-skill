@@ -12,7 +12,7 @@ const {src, dest, parallel, task, watch, series} = require('gulp'),
 
 
 /* -------- Paths ---------- */
-const path = (function(){
+const path = (function () {
     const baseDist = 'dist',
         baseSrc = './src';
 
@@ -42,6 +42,34 @@ const path = (function(){
     };
 }());
 
+// twig functions
+const pathResolve = {
+    images: '/images',
+    asset: '/'
+};
+let twigFunc = [
+    {
+        name: "path",
+        func: function (path) {
+            'use strict';
+
+            let namespace = '';
+            let slashPosition = path.indexOf('/');
+            if (path.charAt(0) === "@" && slashPosition > 0) {
+                namespace = path.slice(1, slashPosition);
+                path = path.slice(path.indexOf('/'))
+            }
+
+            if (namespace && pathResolve.hasOwnProperty(namespace)){
+                return pathResolve[namespace] + path;
+            }
+
+            return path;
+        }
+    }
+];
+
+
 //region server
 task('server', function () {
     browserSync.init({
@@ -66,14 +94,15 @@ task('templates:compile', function buildHTML() {
                     'Flexible',
                     'Secure'
                 ]
-            }
+            },
+            functions: twigFunc
         }))
         .pipe(dest(path.templates.dest))
 });
 //endregion
 
 //region js
-task('app:compile', function(){
+task('app:compile', function () {
     return src(path.js.src)
         .pipe(named())
         .pipe(webpack({
@@ -119,12 +148,12 @@ task('app:compile', function(){
                             'twig-loader',
                             'extract-loader',
                             {
-                                loader:'html-loader',
+                                loader: 'html-loader',
                             },
                         ],
                     },
                     {
-                        test:/\.(woff|woff2|eot|ttf|otf)$/,
+                        test: /\.(woff|woff2|eot|ttf|otf)$/,
                         use: [
                             {
                                 loader: 'file-loader',
