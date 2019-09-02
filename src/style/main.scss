@@ -1,11 +1,8 @@
-@import url('https://fonts.googleapis.com/css?family=PT+Serif&display=swap');
-@import '~animate.css';
+$someVar: #700;
 
-@import './variables';
-@import './common';
-@import './header';
-@import './swiper';
-@import "./advantages";
-@import './employee_main';
-@import "./footer";
-@import './people_list';
+body {
+  background-image: url("../images/wood_texture.jpg");
+  section {
+    background-color: $someVar;
+  }
+}
