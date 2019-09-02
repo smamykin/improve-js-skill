@@ -1,14 +1,9 @@
 const {src, dest, parallel, task, watch, series} = require('gulp'),
     browserSync = require('browser-sync').create(),
-    rimraf = require('rimraf'),
-    twig = require('gulp-twig'),
-    webpack = require('webpack-stream'),
-    named = require('vinyl-named')
-;
-
-// const sass = require('gulp-sass');
-// const spritesmith = require('gulp.spritesmith');
-// const rename = require('gulp-rename');
+    rimraf = require('rimraf'),// clean up dist directory.
+    twig = require('gulp-twig'),// template rendering.
+    webpack = require('webpack-stream'),//prepare js and css
+    named = require('vinyl-named');// It helps to save given names of the files for their  using in the dist directory.
 
 
 /* -------- Paths ---------- */
@@ -24,8 +19,8 @@ const path = (function () {
             src: baseSrc + '/fonts/**/*.*',
         },
         images: {
-            dest: baseDist + '/img',
-            src: baseSrc + '/img/**/*.*',
+            dest: baseDist + '/images',
+            src: baseSrc + '/images/**/*.*',
         },
         templates: {
             dest: baseDist,
@@ -45,7 +40,7 @@ const path = (function () {
 // twig functions
 const pathResolve = {
     images: '/images',
-    asset: '/'
+    asset: ''
 };
 let twigFunc = [
     {
@@ -174,54 +169,26 @@ task('app:compile', function () {
 //endregion
 
 /* ------------ Styles compile ------------- */
-/*
-    !!!! styles should be injected through javascript with webpack. See main.js
- */
+/* !!! Styles should be injected through javascript with webpack. See main.js */
 
-//region sprites
-/* ------------ Sprite ------------- */
-// task('sprite', function(cb) {
-//     const spriteData = gulp.src('source/images/icons/*.png').pipe(spritesmith({
-//         imgName: 'sprite.png',
-//         imgPath: '../images/sprite.png',
-//         cssName: 'sprite.scss'
-//     }));
-//
-//     spriteData.img.pipe(gulp.dest('build/images/'));
-//     spriteData.css.pipe(gulp.dest('source/styles/global/'));
-//     cb();
-// });
-//endregion
-
-//region clean
 task('clean', function del(cb) {
     return rimraf(path.baseDist, cb);
 });
-//endregion
-
-/* ------------ Copy fonts ------------- */
 task('copy:fonts', function () {
     return src(path.fonts.src).pipe(dest(path.fonts.dest));
 });
-
-/* ------------ Copy images ------------- */
 task('copy:images', function () {
     return src(path.images.src).pipe(dest(path.images.dest));
 });
-
-/* ------------ Copy ------------- */
 task('copy', parallel('copy:fonts', 'copy:images'));
-
-/* ------------ Watchers ------------- */
 task('watch', function () {
     watch(path.watch.src, series(
         'templates:compile',
         'app:compile'
     ));
 });
-
 task('default', series(
     'clean',
-    parallel('templates:compile', 'app:compile',/* 'sprite', 'copy'*/),
+    parallel('templates:compile', 'app:compile',/* 'sprite',*/ 'copy'),
     parallel('watch', 'server'),
 ));
