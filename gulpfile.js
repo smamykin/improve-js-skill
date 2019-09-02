@@ -1,12 +1,24 @@
 const {src, dest, parallel, task, watch, series} = require('gulp'),
-    browserSync = require('browser-sync').create(),
+    browserSync = require('browser-sync').create(),//live reload
     rimraf = require('rimraf'),// clean up dist directory.
     twig = require('gulp-twig'),// template rendering.
     webpack = require('webpack-stream'),//prepare js and css
-    named = require('vinyl-named');// It helps to save given names of the files for their  using in the dist directory.
+    named = require('vinyl-named');// It helps to save given names of the files for their using in the dist directory.
 
+/* !!!
+Any styles should be included by webpack in js scripts.
 
-/* -------- Paths ---------- */
+We'll be use two kinds of twig templating:
+ 1. Use gulp-twig for rendering our base html markup;
+ 2. Use  twig-loader in webpack for getting of the simplest pieces of html, that is needed in the js.
+
+ We just copy all images from image folder. So an image can be handled twice:
+ the first time when we copy it by a special gulp task;
+ the second time when webpack try resolve path.
+ I don't think It is serious issue.
+
+*/
+
 const path = (function () {
     const baseDist = 'dist',
         baseSrc = './src';
@@ -37,14 +49,14 @@ const path = (function () {
     };
 }());
 
-// twig functions
+//region twig extensions
 const pathResolve = {
     images: '/images',
     asset: ''
 };
 let twigFunc = [
     {
-        name: "path",
+        name: "path",//unlike webpack we cannot use auto-replacing of paths. So we'll define  the extension, that will help us control paths
         func: function (path) {
             'use strict';
 
@@ -63,9 +75,8 @@ let twigFunc = [
         }
     }
 ];
+//endregion
 
-
-//region server
 task('server', function () {
     browserSync.init({
         server: {
@@ -75,10 +86,7 @@ task('server', function () {
     });
     watch(path.watch.dist).on('change', browserSync.reload);
 });
-//endregion
 
-//region html
-/* ------------ Html compile ------------- */
 task('templates:compile', function buildHTML() {
     return src(path.templates.src)
         .pipe(twig({
@@ -94,9 +102,7 @@ task('templates:compile', function buildHTML() {
         }))
         .pipe(dest(path.templates.dest))
 });
-//endregion
 
-//region js
 task('app:compile', function () {
     return src(path.js.src)
         .pipe(named())
@@ -166,29 +172,30 @@ task('app:compile', function () {
         }))
         .pipe(dest(path.js.dest));
 });
-//endregion
-
-/* ------------ Styles compile ------------- */
-/* !!! Styles should be injected through javascript with webpack. See main.js */
 
 task('clean', function del(cb) {
     return rimraf(path.baseDist, cb);
 });
+
 task('copy:fonts', function () {
     return src(path.fonts.src).pipe(dest(path.fonts.dest));
 });
+
 task('copy:images', function () {
     return src(path.images.src).pipe(dest(path.images.dest));
 });
+
 task('copy', parallel('copy:fonts', 'copy:images'));
+
 task('watch', function () {
     watch(path.watch.src, series(
         'templates:compile',
         'app:compile'
     ));
 });
+
 task('default', series(
     'clean',
-    parallel('templates:compile', 'app:compile',/* 'sprite',*/ 'copy'),
+    parallel('templates:compile', 'app:compile', 'copy'),
     parallel('watch', 'server'),
 ));
