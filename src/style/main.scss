@@ -1,8 +1,9 @@
-$someVar: #700;
+@import "~normalize.css/normalize.css";
+@import "~font-awesome/css/font-awesome.min.css";
 
-body {
-  background-image: url("../images/wood_texture.jpg");
-  section {
-    background-color: $someVar;
-  }
-}
+@import "fonts";
+@import "variables";
+@import "mixins";
+@import "common";
+@import "buttons";
+@import "header";
