@@ -91,7 +91,7 @@ task('templates:compile', function buildHTML() {
     return src(path.templates.src)
         .pipe(twig({
             data: {
-                title: 'Gulp and Twig',
+                title: 'Markup try',
                 benefits: [
                     'Fast',
                     'Flexible',
