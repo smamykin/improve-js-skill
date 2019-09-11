@@ -1,0 +1,27 @@
+<header class="header">
+    <div class="header__top">
+        <div class="container">
+            <div class="contacts">
+                <a href="tel:+00000000000" class="contact"><i class="fa fa-mobile contact__icon contact__icon--mobile" aria-hidden="true"></i><span class="contact__text">+00000000000</span></a>
+                <a href="mailto:info@business.co" class="contact"><i class="fa fa-envelope contact__icon contact__icon--email" aria-hidden="true"></i><span class="contact__text">info@business.co</span></a>
+                <a href="facebook.com" class="facebook-icon"><img src="../images/icons/facebook-head.png" alt="facebook"></a>
+            </div>
+        </div>
+    </div>
+    <div class="header__bottom">
+        <div class="container">
+            <div class="logo"><img src="../images/logo.png" alt=""></div>
+            <nav class="nav">
+                {% set nav = ['Home', 'About Us', 'Our Approch', 'Our Work'] %}
+                {% for item in nav %}
+                    {% set classes = 'nav__link' %}
+                    {% if loop.first %}
+                        {% set classes = classes ~ ' nav__link--active' %}
+                    {% endif %}
+                    <a href="#" class="{{ classes }}">{{ item }}</a>
+                {% endfor %}
+            </nav>
+            <a href="#" class="button header__button button--red">Free Consultation</a>
+        </div>
+    </div>
+</header>
