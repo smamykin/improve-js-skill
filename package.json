@@ -3,7 +3,10 @@
   "version": "2.0.0",
   "description": "This is a homework that I make up for myself.",
   "main": "index.js",
-  "dependencies": {},
+  "dependencies": {
+    "font-awesome": "^4.7.0",
+    "normalize.css": "^8.0.1"
+  },
   "devDependencies": {
     "@babel/core": "^7.0.0",
     "@babel/plugin-proposal-object-rest-spread": "^7.3.2",
