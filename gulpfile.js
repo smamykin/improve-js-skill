@@ -188,7 +188,7 @@ task('copy:images', function () {
 task('copy', parallel('copy:fonts', 'copy:images'));
 
 task('watch', function () {
-    watch(path.watch.src, series(
+    watch(path.watch.src, parallel(
         'templates:compile',
         'app:compile'
     ));
