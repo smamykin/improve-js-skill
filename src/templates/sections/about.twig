@@ -1,0 +1,28 @@
+<section class="about">
+    <div class="container">
+        <div class="title title--with-bottom-line">
+            <h2 class="title title__header">About us</h2>
+            <div class="title__text">
+                We are added our major Services
+            </div>
+        </div>
+
+        <ul class="about__list">
+            {% include '_about_item.twig' with {
+                'title': 'Facebook marketing',
+                'text': 'All children like squeezed melons in condensed milk and black cardamon.',
+                'icon_extra_class': 'icon-like',
+            } only %}
+            {% include '_about_item.twig' with {
+                'title': 'Landing pages Creation',
+                'text': 'All children like squeezed melons in condensed milk and black cardamon.',
+                'icon_extra_class': 'icon-book',
+            } only %}
+            {% include '_about_item.twig' with {
+                'title': 'Ads management',
+                'text': 'All children like squeezed melons in condensed milk and black cardamon.',
+                'icon_extra_class': 'icon-message',
+            } only %}
+        </ul>
+    </div>
+</section>
