@@ -18,11 +18,10 @@
 
 .contact {
   display: inline-block;
-  vertical-align: top;
+  vertical-align: middle;
   padding: 10px 10px 8px;
   color: #424242;
   transition: 0.3s;
-
   &:hover {
     color: lighten(#424242, 20%);
   }
@@ -44,9 +43,10 @@
 }
 .facebook-icon {
   display: inline-block;
-  margin: 7px 0;
-  padding: 5px 8px 1px;
   border-radius: 3px;
+  vertical-align: middle;
+  width: 26px;
+  height: 26px;
   img {
     width: 100%;
     height: 100%;
