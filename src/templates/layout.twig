@@ -13,9 +13,7 @@
 </head>
 <body>
 {% include 'header.twig' %}
-<section>
-    {% block page %}{% endblock %}
-</section>
+{% block page %}{% endblock %}
 <script src="{{ path('@asset/js/main.js') }}"></script>
 <script src="{{ path('@asset/js/second.js') }}"></script>
 </body>
