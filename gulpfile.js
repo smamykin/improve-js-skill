@@ -3,8 +3,8 @@ const {src, dest, parallel, task, watch, series} = require('gulp'),
     rimraf = require('rimraf'),// clean up dist directory.
     twig = require('gulp-twig'),// template rendering.
     webpack = require('webpack-stream'),//prepare js and css
-    named = require('vinyl-named');// It helps to save given names of the files for their using in the dist directory.
-
+    named = require('vinyl-named'),// It helps to save given names of the files for their using in the dist directory.
+    spritesmith = require('gulp.spritesmith');
 /* !!!
 Any styles should be included by webpack in js scripts.
 
@@ -17,6 +17,7 @@ We'll be use two kinds of twig templating:
  the second time when webpack try resolve path.
  I don't think It is serious issue.
 
+Sprites must be compile manually and then must be committed.
 */
 
 const path = (function () {
@@ -188,7 +189,7 @@ task('copy:images', function () {
 task('copy', parallel('copy:fonts', 'copy:images'));
 
 task('watch', function () {
-    watch(path.watch.src, series(
+    watch(path.watch.src, parallel(
         'templates:compile',
         'app:compile'
     ));
@@ -199,3 +200,16 @@ task('default', series(
     parallel('templates:compile', 'app:compile', 'copy'),
     parallel('watch', 'server'),
 ));
+
+task('sprite:compile', function(cb){
+    const spriteData = src(path.baseSrc + '/images/icons/*.png')
+        .pipe(spritesmith({
+            imgName: 'sprite.png',
+            imgPath: '../images/icons/sprite.png',
+            cssName: '_sprite.scss'
+        }));
+
+    spriteData.img.pipe(dest(path.baseSrc + '/images/icons/'));
+    spriteData.css.pipe(dest(path.baseSrc + '/style/' ));
+    cb();
+});
