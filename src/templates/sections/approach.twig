@@ -1,0 +1,22 @@
+<section class="approach">
+    <div class="container">
+        <div class="title title--with-bottom-line">
+            <h2 class="title title__header">Our Approach</h2>
+            <div class="title__text">Check our approaches step by step (how we do it)</div>
+        </div>
+        <ul class="approach__list">
+            {% set mockDesc %}
+                Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
+                when an unknown printer took a galley of type and scrambled.
+            {% endset %}
+            {% for i in 1..4 %}
+                {% include '_step.twig' with {
+                    'imageSrc': '../../images/step-'~ i ~'.jpg',
+                    'title': 'Step ' ~ i ~ ': Heading Here',
+                    'desc': mockDesc
+                } only %}
+            {% endfor %}
+        </ul>
+    </div>
+</section>
