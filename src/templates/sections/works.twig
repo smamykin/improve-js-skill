@@ -1,0 +1,25 @@
+<section class="work">
+    <div class="container">
+        <div class="title title--with-bottom-line">
+            <h2 class="title title__header">Our Work</h2>
+            <div class="title__text">We are added our featured works below</div>
+        </div>
+        <ul class="work__list">
+            {% for i in 1..4 %}
+                <li class="work__item work__item--name">
+                    <div class="work__name">Project Name</div>
+                    <div class="work__description">
+                        {% if i == 2 or i == 3 %}
+                            Landing page
+                        {% else %}
+                            Facebook marketing
+                        {% endif %}
+                    </div>
+                </li>
+                <li class="work__item">
+                    <img src="images/work-{{ i }}.jpg" alt="picture" class="work__picture">
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</section>

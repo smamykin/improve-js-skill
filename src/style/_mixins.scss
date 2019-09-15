@@ -8,7 +8,7 @@
 @mixin centerer-x() {
   position: absolute;
   left: 50%;
-  transform: translateX(-50px);
+  transform: translateX(-50%);
 }
 
 @mixin centerer-y() {
