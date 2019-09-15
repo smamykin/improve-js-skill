@@ -11,7 +11,7 @@
     font-family: $ff-main-bold;
     text-decoration: none;
     text-transform: capitalize;
-    color:#424242;
+    color:$color;
     transition:0.3s;
 
     &:hover,
@@ -29,7 +29,7 @@
       -moz-border-radius: 50%;
       margin-left: 15px;
       border-radius: 50%;
-      background: #424242;
+      background: $color;
 
     }
 
