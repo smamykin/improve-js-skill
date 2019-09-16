@@ -29,3 +29,12 @@ ol {
   margin: 0 auto;
   max-width: 1024px;
 }
+
+.is_hidden {
+  display:none!important;
+}
+
+.visually-hidden {
+  text-indent: -999px;
+  font-size: 0;
+}

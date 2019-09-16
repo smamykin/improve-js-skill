@@ -1,0 +1,33 @@
+{% set linkItems= {
+    'facebook-official': 'https://facebook.com',
+    'twitter': 'https://twitter.com',
+    'google-plus': 'https://google.com',
+    'linkedin': 'https://linkedin.com'
+} %}
+
+<footer class="footer">
+    <div class="footer__top">
+        <div class="container">
+            <div class="footer__title">Get in touch</div>
+            <div class="footer__links">
+                {% for key, value in linkItems %}
+                    <a class="footer__social" href="{{ value }}" target="_blank"><i class="fa fa-{{ key }}" aria-hidden="true">
+                            <span class="visually-hidden">{{ value }}</span>
+                        </i></a>
+                {% endfor %}
+            </div>
+            <div class="footer__text">Subscribe to our newsletter to stay update with what is new</div>
+            <form action="#" method="post">
+                <div class="footer__field">
+                    <input type="email" class="footer__input" placeholder="Email Address">
+                </div>
+                <button type="submit" class="button"> Subscribe</button>
+            </form>
+        </div>
+    </div>
+    <div class="footer__bottom">
+        <div class="footer__copy">
+            Cssauthor.com © 2014 All Rights Reserved
+        </div>
+    </div>
+</footer>
