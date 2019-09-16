@@ -15,6 +15,26 @@
     font-size: 1.25rem;
   }
 
+  .btn-down {
+    position: relative;
+
+    margin: auto auto 25px;
+    height: 61px;
+    width: 61px;
+    border: 3px solid #fff;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    border-radius: 50%;
+  }
+
+  .arrow-down {
+    @include centerer-xy();
+    .fa {
+      color:#fff;
+      font-size: 2.5rem;
+    }
+  }
+
   .form {
     position: relative;
     width: 67%;
@@ -81,7 +101,13 @@
       -moz-border-radius: 3px;
       border-radius: 3px;
       font-size: 0.875rem;
+
+      &:focus {
+        border: 1px solid #1287bf;
+        box-shadow: 0 0 5px rgba(18, 135, 191, 0.66);
+      }
     }
+
 
     .button {
       padding: 15px 30px;
