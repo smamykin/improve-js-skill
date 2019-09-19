@@ -25,6 +25,7 @@
     -webkit-border-radius: 50%;
     -moz-border-radius: 50%;
     border-radius: 50%;
+    transition: transform .25s ease-in-out;
   }
 
   .arrow-down {
@@ -49,6 +50,7 @@
 
     &-container {
       padding-top: 30px;
+      overflow:hidden;
     }
 
     &:before {
@@ -116,3 +118,29 @@
   }
 }
 
+.slideDown form {
+  animation-duration: 1.5s;
+  animation-name: slideDown;
+}
+
+.slideIt.is_hidden form{
+  animation-duration: 1.5s;
+  animation-name: slideUp;
+}
+
+@keyframes slideUp {
+  from {
+    margin-top: 0;
+  }
+  to {
+    margin-top: -100%;
+  }
+}
+@keyframes slideDown {
+  from {
+    margin-top: -100%;
+  }
+  to {
+    margin-top: 0;
+  }
+}
