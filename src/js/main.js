@@ -8,5 +8,7 @@ form({
     closeButton: document.querySelector('.js-form_close'),
     showHideButton: document.querySelector('.js-show_hide_trigger'),
     hideClass:'is_hidden',
-    showClass:'slideDown'
+    showClass:'slideDown',
+    form: document.querySelector('.js-form_container form'),
+    errorClass: 'is_error'
 });

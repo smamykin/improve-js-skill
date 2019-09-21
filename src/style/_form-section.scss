@@ -83,8 +83,13 @@
       &:hover {
         background: lighten(#de2b24, 10%);
       }
+
     }
 
+    .is_error {
+      border-color: tomato;
+      box-shadow: 0 0 5px 5px tomato;
+    }
     &__text {
       margin-bottom: 33px;
       font-size: 0.9375rem;
