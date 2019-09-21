@@ -17,6 +17,7 @@
 
   .btn-down {
     position: relative;
+    cursor:pointer;
 
     margin: auto auto 25px;
     height: 61px;
@@ -64,6 +65,7 @@
 
     &__close-button {
       position: absolute;
+      cursor:pointer;
       right: -16px;
       top: -22px;
       -webkit-border-radius: 50%;
@@ -123,9 +125,10 @@
   animation-name: slideDown;
 }
 
-.slideIt.is_hidden form{
+.is_hidden form{
   animation-duration: 1.5s;
   animation-name: slideUp;
+  animation-fill-mode: forwards;
 }
 
 @keyframes slideUp {
@@ -133,12 +136,12 @@
     margin-top: 0;
   }
   to {
-    margin-top: -100%;
+    margin-top: -50%;
   }
 }
 @keyframes slideDown {
   from {
-    margin-top: -100%;
+    margin-top: -50%;
   }
   to {
     margin-top: 0;
