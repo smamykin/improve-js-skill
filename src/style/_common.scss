@@ -34,3 +34,11 @@ ol {
   text-indent: -999px;
   font-size: 0;
 }
+
+.d_fixed {
+  position: fixed;
+  top:0;
+  background-color: #fff;
+  width:100%;
+  z-index:100;
+}
