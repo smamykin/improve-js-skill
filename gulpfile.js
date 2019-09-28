@@ -85,7 +85,7 @@ task('server', function () {
             baseDir: path.baseDist
         }
     });
-    watch(path.watch.dist).on('change', browserSync.reload);
+    // watch(path.watch.dist).on('change', browserSync.reload);
 });
 
 task('templates:compile', function buildHTML() {
@@ -187,12 +187,19 @@ task('copy:images', function () {
 });
 
 task('copy', parallel('copy:fonts', 'copy:images'));
+task('reload', function(cb){
+    browserSync.reload();
+    cb();
+});
 
 task('watch', function () {
-    watch(path.watch.src, parallel(
-        'templates:compile',
-        'app:compile'
-    ));
+    watch(path.watch.src, series(
+        parallel(
+            'templates:compile',
+            'app:compile'
+        ),
+        'reload'
+));
 });
 
 task('default', series(
